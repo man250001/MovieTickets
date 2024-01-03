@@ -1,0 +1,5 @@
+*.fxml linguist-language=xml linguist-detectable
+
+target/** linguist-vendored
+lib/** linguist-vendored
+.idea/** linguist-generated
