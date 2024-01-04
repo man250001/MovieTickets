@@ -9,11 +9,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class DBUtils {
 
     public static void changeScene(ActionEvent event, String fxmlFile, String title) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(DBUtils.class.getClassLoader().getResource(fxmlFile)));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(DBUtils.class.getResource(fxmlFile)));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setTitle(title);
         stage.setScene(new Scene(root));
@@ -22,15 +23,20 @@ public class DBUtils {
 
     public static boolean checkUsername(String username) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE username = ?");
         preparedStatement.setString(1, username);
         ResultSet resultSet = preparedStatement.executeQuery();
         return resultSet.next();
     }
 
+    public static boolean validateEmail(String email) {
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-zA-Z.]{2,18}");
+        return pattern.matcher(email).matches();
+    }
+
     public static boolean logInUser(ActionEvent event, String username, String password) throws SQLException, IOException {
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?");
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -55,9 +61,16 @@ public class DBUtils {
             alert.setContentText("Please try again");
             alert.showAndWait();
             return;
+        }else if (!validateEmail(email)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Invalid email, must inclue @ and .(domain)");
+            alert.setContentText("Please try again");
+            alert.showAndWait();
+            return;
         }
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users (username, password, email) VALUES (?, ?, ?)");
+        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         preparedStatement.setString(3, email);
