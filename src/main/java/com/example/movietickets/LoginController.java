@@ -32,7 +32,7 @@ public class LoginController implements Initializable {
         });
         signUpLink.setOnAction(actionEvent -> {
             try {
-                DBUtils.changeScene(actionEvent, "SignUp.fxml", "Sign Up");
+                DBUtils.changeScene(actionEvent, "signup.fxml", "Sign Up");
             } catch (Exception e) {
                 e.printStackTrace();
             }
