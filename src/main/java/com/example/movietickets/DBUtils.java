@@ -1,5 +1,6 @@
 package com.example.movietickets;
 
+import com.zaxxer.hikari.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
@@ -13,6 +14,20 @@ import java.util.regex.Pattern;
 
 public class DBUtils {
 
+    private static final HikariConfig config = new HikariConfig();
+    private static final HikariDataSource ds;
+
+    static {
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/movietickets");
+        config.setUsername("root");
+        config.setPassword("password");
+        ds = new HikariDataSource(config);
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return ds.getConnection();
+    }
+
     public static void changeScene(ActionEvent event, String fxmlFile, String title) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(DBUtils.class.getResource(fxmlFile)));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -22,7 +37,7 @@ public class DBUtils {
     }
 
     public static boolean checkUsername(String username) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
+        Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE username = ?");
         preparedStatement.setString(1, username);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -34,22 +49,20 @@ public class DBUtils {
         return pattern.matcher(email).matches();
     }
 
-    public static boolean logInUser(ActionEvent event, String username, String password) throws SQLException, IOException {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
+    public static void logInUser(ActionEvent event, String username, String password) throws SQLException, IOException {
+        Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             changeScene(event, "HomePage.fxml", "Home Menu");
-            return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Invalid username or password");
             alert.setContentText("Please try again");
             alert.showAndWait();
-            return false;
         }
     }
 
@@ -69,7 +82,7 @@ public class DBUtils {
             alert.showAndWait();
             return;
         }
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
+        Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
@@ -80,7 +93,7 @@ public class DBUtils {
 
     //Currently unused, will be modified/used in the future, thanks! 😊 -GitHub Copilot
     public static void addMovie(ActionEvent event, String title, String genre, String rating) throws SQLException, IOException {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
+        Connection connection = getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
         preparedStatement.setString(1, title);
         preparedStatement.setString(2, genre);
