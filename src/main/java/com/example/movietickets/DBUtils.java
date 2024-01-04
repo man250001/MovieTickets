@@ -35,7 +35,7 @@ public class DBUtils {
         preparedStatement.setString(2, password);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            changeScene(event, "HomeMenu.fxml", "Home Menu");
+            changeScene(event, "HomePage.fxml", "Home Menu");
             return true;
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
