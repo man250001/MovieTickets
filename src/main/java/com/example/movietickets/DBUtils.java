@@ -65,7 +65,7 @@ public class DBUtils {
         changeScene(event, "Login.fxml", "Login");
     }
 
-    //Currently unused, will be modified/used in the future, thanks! 😊
+    //Currently unused, will be modified/used in the future, thanks! 😊 -GitHub Copilot
     public static void addMovie(ActionEvent event, String title, String genre, String rating) throws SQLException, IOException {
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
         PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
