@@ -106,15 +106,5 @@ public class DBUtils {
         }
     }
 
-    //Currently unused, will be modified/used in the future, thanks! 😊 -GitHub Copilot
-    public static void addMovie(ActionEvent event, String title, String genre, String rating) {
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
-            preparedStatement.setString(1, title);
-            preparedStatement.setString(2, genre);
-            preparedStatement.setString(3, rating);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }
