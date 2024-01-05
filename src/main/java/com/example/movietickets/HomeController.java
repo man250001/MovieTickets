@@ -56,7 +56,7 @@ public class HomeController implements Initializable {
             try {
                 DBUtils.changeScene(actionEvent, "login.fxml", "Login");
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         });
     }

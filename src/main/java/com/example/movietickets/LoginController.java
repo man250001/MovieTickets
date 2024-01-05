@@ -27,14 +27,14 @@ public class LoginController implements Initializable {
             try {
                 DBUtils.logInUser(actionEvent, usernameBox.getText(), passwordBox.getText());
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         });
         signUpLink.setOnAction(actionEvent -> {
             try {
                 DBUtils.changeScene(actionEvent, "signup.fxml", "Sign Up");
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         });
     }
