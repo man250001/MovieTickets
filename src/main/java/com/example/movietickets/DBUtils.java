@@ -37,8 +37,7 @@ public class DBUtils {
     }
 
     public static boolean checkUsername(String username) throws SQLException {
-        Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE username = ?");
+        PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ?");
         preparedStatement.setString(1, username);
         ResultSet resultSet = preparedStatement.executeQuery();
         return resultSet.next();
@@ -50,8 +49,7 @@ public class DBUtils {
     }
 
     public static void logInUser(ActionEvent event, String username, String password) throws SQLException, IOException {
-        Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
+        PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -82,8 +80,7 @@ public class DBUtils {
             alert.showAndWait();
             return;
         }
-        Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
+        PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         preparedStatement.setString(3, email);
@@ -93,8 +90,7 @@ public class DBUtils {
 
     //Currently unused, will be modified/used in the future, thanks! 😊 -GitHub Copilot
     public static void addMovie(ActionEvent event, String title, String genre, String rating) throws SQLException, IOException {
-        Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
+        PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
         preparedStatement.setString(1, title);
         preparedStatement.setString(2, genre);
         preparedStatement.setString(3, rating);
