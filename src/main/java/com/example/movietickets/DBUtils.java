@@ -41,11 +41,16 @@ public class DBUtils {
         stage.show();
     }
 
-    public static boolean checkUsername(String username) throws SQLException {
-        PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ?");
-        preparedStatement.setString(1, username);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        return resultSet.next();
+    public static boolean checkUsername(String username) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ?");
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static boolean validateEmail(String email) {
@@ -53,51 +58,63 @@ public class DBUtils {
         return pattern.matcher(email).matches();
     }
 
-    public static void logInUser(ActionEvent event, String username, String password) throws SQLException, IOException {
-        PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
-        preparedStatement.setString(1, username);
-        preparedStatement.setString(2, password);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            changeScene(event, "HomePage.fxml", "Home Menu");
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid username or password");
-            alert.setContentText("Please try again");
-            alert.showAndWait();
+    public static void logInUser(ActionEvent event, String username, String password) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM user WHERE username = ? AND password = ?");
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                changeScene(event, "HomePage.fxml", "Home Menu");
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Invalid username or password");
+                alert.setContentText("Please try again");
+                alert.showAndWait();
+            }
+        }catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static void signUpUser(ActionEvent event, String username, String password, String email) throws SQLException, IOException {
-        if (checkUsername(username)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Username already exists");
-            alert.setContentText("Please try again");
-            alert.showAndWait();
-            return;
-        }else if (!validateEmail(email)) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid email, must inclue @ and .(domain)");
-            alert.setContentText("Please try again");
-            alert.showAndWait();
-            return;
+    public static void signUpUser(ActionEvent event, String username, String password, String email) {
+        try {
+            if (checkUsername(username)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Username already exists");
+                alert.setContentText("Please try again");
+                alert.showAndWait();
+                return;
+            } else if (!validateEmail(email)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Invalid email, must inclue @ and .(domain)");
+                alert.setContentText("Please try again");
+                alert.showAndWait();
+                return;
+            }
+            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, email);
+            preparedStatement.executeUpdate();
+            changeScene(event, "Login.fxml", "Login");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
-        preparedStatement.setString(1, username);
-        preparedStatement.setString(2, password);
-        preparedStatement.setString(3, email);
-        preparedStatement.executeUpdate();
-        changeScene(event, "Login.fxml", "Login");
     }
 
     //Currently unused, will be modified/used in the future, thanks! 😊 -GitHub Copilot
-    public static void addMovie(ActionEvent event, String title, String genre, String rating) throws SQLException {
-        PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
-        preparedStatement.setString(1, title);
-        preparedStatement.setString(2, genre);
-        preparedStatement.setString(3, rating);
+    public static void addMovie(ActionEvent event, String title, String genre, String rating) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
+            preparedStatement.setString(1, title);
+            preparedStatement.setString(2, genre);
+            preparedStatement.setString(3, rating);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
