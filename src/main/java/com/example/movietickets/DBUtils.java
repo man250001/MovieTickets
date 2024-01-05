@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "resource"})
 public class DBUtils {
 
     private static final HikariConfig config = new HikariConfig();
