@@ -12,6 +12,7 @@ import java.sql.*;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class DBUtils {
 
     private static final HikariConfig config = new HikariConfig();
@@ -93,7 +94,7 @@ public class DBUtils {
     }
 
     //Currently unused, will be modified/used in the future, thanks! 😊 -GitHub Copilot
-    public static void addMovie(ActionEvent event, String title, String genre, String rating) throws SQLException, IOException {
+    public static void addMovie(ActionEvent event, String title, String genre, String rating) throws SQLException {
         PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, runtime, releaseDate) VALUES (?, ?, ?, ?)");
         preparedStatement.setString(1, title);
         preparedStatement.setString(2, genre);
