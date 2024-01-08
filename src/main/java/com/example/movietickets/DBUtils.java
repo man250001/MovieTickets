@@ -5,10 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -106,5 +108,33 @@ public class DBUtils {
         }
     }
 
+    public static void addMovie(ActionEvent event, String title, String genre, String duration, Date releaseDate, Image image) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, duration, releaseDate, image) VALUES (?, ?, ?, ?, ?)");
+            preparedStatement.setString(1, title);
+            preparedStatement.setString(2, genre);
+            preparedStatement.setString(3, duration);
+            preparedStatement.setDate(4, releaseDate);
+            preparedStatement.setString(5, image.getUrl());
+            preparedStatement.executeUpdate();
+            changeScene(event, "HomePage.fxml", "Home Menu");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
+    }
+
+    public static ArrayList<Movie> getAllMovies() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM movies");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ArrayList<Movie> movies = new ArrayList<>();
+            while (resultSet.next()) {
+                movies.add(new Movie(resultSet.getString("title"), resultSet.getString("genre"), resultSet.getString("duration"), resultSet.getDate("releaseDate"), new Image(resultSet.getString("image"))));
+            }
+            return movies;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
