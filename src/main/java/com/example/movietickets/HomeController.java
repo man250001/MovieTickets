@@ -98,9 +98,7 @@ public class HomeController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
-        importAdd.setOnAction(actionEvent -> {
-            imageAdd.setImage(ImportImage());
-        });
+        importAdd.setOnAction(actionEvent -> imageAdd.setImage(ImportImage()));
         movieList.setOnMouseClicked(mouseEvent -> {
             Movie movie = movieList.getSelectionModel().getSelectedItem();
             currentID = movie.ID();
