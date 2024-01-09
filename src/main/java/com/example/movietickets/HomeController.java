@@ -96,6 +96,7 @@ public class HomeController implements Initializable {
         insertAdd.setOnAction(actionEvent -> {
             try {
                 DBUtils.addMovie(actionEvent, titleAdd.getText(), genreAdd.getText(), durationAdd.getText(), java.sql.Date.valueOf(dateAdd.getValue()), imageAdd.getImage());
+                fillAddMoviesTable();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -115,9 +116,25 @@ public class HomeController implements Initializable {
         deleteAdd.setOnAction(actionEvent -> {
             try {
                 DBUtils.removeMovie(actionEvent, currentID);
+                fillAddMoviesTable();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+        });
+        updateAdd.setOnAction(actionEvent -> {
+            try {
+                DBUtils.updateMovie(actionEvent, currentID, titleAdd.getText(), genreAdd.getText(), durationAdd.getText(), java.sql.Date.valueOf(dateAdd.getValue()), imageAdd.getImage());
+                fillAddMoviesTable();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        clearAdd.setOnAction(actionEvent -> {
+            titleAdd.clear();
+            genreAdd.clear();
+            durationAdd.clear();
+            dateAdd.setValue(null);
+            imageAdd.setImage(null);
         });
     }
 

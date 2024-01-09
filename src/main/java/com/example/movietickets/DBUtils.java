@@ -135,6 +135,22 @@ public class DBUtils {
         }
     }
 
+    public static void updateMovie(ActionEvent event, int id, String title, String genre, String duration, Date releaseDate, Image image) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("UPDATE movies SET title = ?, genre = ?, duration = ?, releaseDate = ?, image = ? WHERE id = ?");
+            File temp = new File(image.getUrl());
+            preparedStatement.setString(1, title);
+            preparedStatement.setString(2, genre);
+            preparedStatement.setString(3, duration);
+            preparedStatement.setDate(4, releaseDate);
+            preparedStatement.setString(5, temp.toURI().toString());
+            preparedStatement.setInt(6, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static ArrayList<Movie> getAllMovies() {
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM movies");
