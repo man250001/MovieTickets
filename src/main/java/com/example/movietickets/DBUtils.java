@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -111,17 +112,27 @@ public class DBUtils {
     public static void addMovie(ActionEvent event, String title, String genre, String duration, Date releaseDate, Image image) {
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, duration, releaseDate, image) VALUES (?, ?, ?, ?, ?)");
+            File temp = new File(image.getUrl());
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, genre);
             preparedStatement.setString(3, duration);
             preparedStatement.setDate(4, releaseDate);
-            preparedStatement.setString(5, image.getUrl());
+            preparedStatement.setString(5, temp.toURI().toString());
             preparedStatement.executeUpdate();
-            changeScene(event, "HomePage.fxml", "Home Menu");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public static void removeMovie(ActionEvent event, int id) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM movies WHERE id = ?");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static ArrayList<Movie> getAllMovies() {
@@ -130,7 +141,7 @@ public class DBUtils {
             ResultSet resultSet = preparedStatement.executeQuery();
             ArrayList<Movie> movies = new ArrayList<>();
             while (resultSet.next()) {
-                movies.add(new Movie(resultSet.getString("title"), resultSet.getString("genre"), resultSet.getString("duration"), resultSet.getDate("releaseDate"), new Image(resultSet.getString("image"))));
+                movies.add(new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getString("genre"), resultSet.getString("duration"), resultSet.getDate("releaseDate"), new Image(resultSet.getString("image"))));
             }
             return movies;
         } catch (Exception e) {
