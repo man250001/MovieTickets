@@ -14,8 +14,8 @@
          <Font size="18.0" />
       </font>
    </Label>
-   <PasswordField fx:id="passwordBox" layoutX="226.0" layoutY="188.0" promptText="Password" />
    <TextField fx:id="usernameBox" layoutX="226.0" layoutY="151.0" promptText="Username" />
+   <PasswordField fx:id="passwordBox" layoutX="226.0" layoutY="188.0" promptText="Password" />
    <Button fx:id="signInButton" layoutX="226.0" layoutY="229.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="Sign In" AnchorPane.bottomAnchor="146.0" AnchorPane.leftAnchor="226.0" AnchorPane.rightAnchor="318.0" AnchorPane.topAnchor="229.0" />
    <Hyperlink fx:id="signUpLink" layoutX="325.0" layoutY="229.0" text="Sign Up" AnchorPane.bottomAnchor="146.0" AnchorPane.leftAnchor="325.0" AnchorPane.rightAnchor="225.0" AnchorPane.topAnchor="229.0" />
 </AnchorPane>
