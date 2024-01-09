@@ -1,5 +1,7 @@
 package com.example.movietickets;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,6 +22,8 @@ import java.util.ResourceBundle;
 @SuppressWarnings("unchecked")
 public class HomeController implements Initializable {
 
+    public int currentID = 0;
+
     @FXML
     private AnchorPane addLeft, bottomPane, dashTop, editBottom, editTop, leftPane, movieRight, rightPane, ticketLeft, ticketRight, topPane, movieLeft;
 
@@ -33,10 +37,10 @@ public class HomeController implements Initializable {
     private TextField titleAdd, genreAdd, durationAdd;
 
     @FXML
-    private TableView<Movie> MovieList;
+    private TableView<Movie> movieList;
 
     @FXML
-    private TableColumn<Movie, String> titleColAdd, genreColAdd, durationColAdd, dateColAdd;
+    private TableColumn<Movie, String> titleColAdd, genreColAdd, durationColAdd, publishedColAdd;
 
     @FXML
     private DatePicker dateAdd;
@@ -99,7 +103,22 @@ public class HomeController implements Initializable {
         importAdd.setOnAction(actionEvent -> {
             imageAdd.setImage(ImportImage());
         });
-
+        movieList.setOnMouseClicked(mouseEvent -> {
+            Movie movie = movieList.getSelectionModel().getSelectedItem();
+            currentID = movie.ID();
+            titleAdd.setText(movie.title());
+            genreAdd.setText(movie.genre());
+            durationAdd.setText(movie.duration());
+            dateAdd.setValue(movie.releaseDate().toLocalDate());
+            imageAdd.setImage(movie.image());
+        });
+        deleteAdd.setOnAction(actionEvent -> {
+            try {
+                DBUtils.removeMovie(actionEvent, currentID);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     public void CompletelyDisable(Pane pane) {
@@ -144,22 +163,11 @@ public class HomeController implements Initializable {
     }
 
     public void fillAddMoviesTable() {
-        ArrayList<Movie> movies = DBUtils.getAllMovies();
-        ArrayList<String> titles = new ArrayList<>(), genres = new ArrayList<>(), durations = new ArrayList<>();
-        ArrayList<Date> dates = new ArrayList<>();
-        if (movies.isEmpty()){
-            return;
-        }
-        for (Movie movie : movies) {
-            titles.add(movie.title());
-            genres.add(movie.genre());
-            durations.add(movie.duration());
-            dates.add(movie.releaseDate());
-        }
-        titleColAdd.setCellValueFactory(new PropertyValueFactory<>("title"));
-        genreColAdd.setCellValueFactory(new PropertyValueFactory<>("genre"));
-        durationColAdd.setCellValueFactory(new PropertyValueFactory<>("duration"));
-        dateColAdd.setCellValueFactory(new PropertyValueFactory<>("releaseDate"));
-        MovieList.getColumns().setAll(titleColAdd, genreColAdd, durationColAdd, dateColAdd);
+        movieList.setItems(FXCollections.observableList(DBUtils.getAllMovies()));
+        titleColAdd.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().title()));
+        genreColAdd.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().genre()));
+        durationColAdd.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().duration()));
+        publishedColAdd.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().releaseDate().toString()));
+        movieList.getColumns().setAll(titleColAdd, genreColAdd, durationColAdd, publishedColAdd);
     }
 }
