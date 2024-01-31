@@ -1,6 +1,5 @@
 package com.example.movietickets;
 
-import com.zaxxer.hikari.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.*;
@@ -18,22 +17,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"unused", "resource"})
 public class DBUtils {
 
-    private static final HikariConfig config = new HikariConfig();
-    private static final HikariDataSource ds;
-
-    static {
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/movietickets");
-        config.setUsername("root");
-        config.setPassword("password");
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        ds = new HikariDataSource(config);
-    }
-
     public static Connection getConnection() throws SQLException {
-        return ds.getConnection();
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/movietickets", "root", "password");
     }
 
     public static void changeScene(ActionEvent event, String fxmlFile, String title) throws IOException {
