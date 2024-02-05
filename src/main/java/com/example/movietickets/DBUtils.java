@@ -97,12 +97,11 @@ public class DBUtils {
     public static void addMovie(ActionEvent event, String title, String genre, String duration, Date releaseDate, Image image) {
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO movies (title, genre, duration, releaseDate, image) VALUES (?, ?, ?, ?, ?)");
-            File temp = new File(image.getUrl());
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, genre);
             preparedStatement.setString(3, duration);
             preparedStatement.setDate(4, releaseDate);
-            preparedStatement.setString(5, temp.toURI().toString());
+            preparedStatement.setString(5, image.getUrl());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -123,12 +122,11 @@ public class DBUtils {
     public static void updateMovie(ActionEvent event, int id, String title, String genre, String duration, Date releaseDate, Image image) {
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("UPDATE movies SET title = ?, genre = ?, duration = ?, releaseDate = ?, image = ? WHERE id = ?");
-            File temp = new File(image.getUrl());
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, genre);
             preparedStatement.setString(3, duration);
             preparedStatement.setDate(4, releaseDate);
-            preparedStatement.setString(5, temp.toURI().toString());
+            preparedStatement.setString(5, image.getUrl());
             preparedStatement.setInt(6, id);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
@@ -143,8 +141,24 @@ public class DBUtils {
             ArrayList<Movie> movies = new ArrayList<>();
             while (resultSet.next()) {
                 movies.add(new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getString("genre"), resultSet.getString("duration"), resultSet.getDate("releaseDate"), new Image(resultSet.getString("image"))));
+                System.out.println(resultSet.getString("image"));
             }
             return movies;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addTransaction(ActionEvent event, String type, String movieTitle, int quantity, double total, Date date, Time time){
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO transaction (ticketType, movieTitle, quantity, total, date, time) VALUES (?, ?, ?, ?, ?, ?)");
+            preparedStatement.setString(1, type);
+            preparedStatement.setString(2, movieTitle);
+            preparedStatement.setInt(3, quantity);
+            preparedStatement.setDouble(4, total);
+            preparedStatement.setDate(5, date);
+            preparedStatement.setTime(6, time);
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
