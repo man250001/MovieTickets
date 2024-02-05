@@ -43,12 +43,73 @@ public class HomeController implements Initializable {
     private DatePicker dateAdd;
 
     @FXML
+    private TableView<Movie> eMovieTable;
+
+    @FXML
+    private TableColumn<Movie, String> eMTitle, eMGenre, eMDate;
+
+    @FXML
+    private ImageView eImage;
+
+    @FXML
+    private Button eClear, eBuy, eReceipt;
+
+    @FXML
+    private Spinner<Integer> eNormal, eSpecial;
+
+    @FXML
+    private Label eTotal, eNPrice, eSPrice, eTitleLabel, eGenreLabel;
+
+    @FXML
     private ImageView imageAdd;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         fillAddMoviesTable();
+        fillEditMoviesTable();
+        eNormal.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
+        eSpecial.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
 
+
+        eMovieTable.setOnMouseClicked(mouseEvent -> {
+            Movie movie = eMovieTable.getSelectionModel().getSelectedItem();
+            eTitleLabel.setText(movie.title());
+            eGenreLabel.setText(movie.genre());
+            eImage.setImage(movie.image());
+            eSpecial.setDisable(false);
+            eNormal.setDisable(false);
+            eBuy.setDisable(false);
+        });
+        eClear.setOnAction(actionEvent -> {
+            eTitleLabel.setText("");
+            eGenreLabel.setText("");
+            eImage.setImage(null);
+            eSpecial.setDisable(true);
+            eNormal.setDisable(true);
+            eBuy.setDisable(true);
+            eSpecial.getValueFactory().setValue(0);
+            eNormal.getValueFactory().setValue(0);
+            eTotal.setText("$0.00");
+            eNPrice.setText("$0.00");
+            eSPrice.setText("$0.00");
+        });
+        eBuy.setOnAction(actionEvent -> {
+            if (eSpecial.getValue() != 0){
+                DBUtils.addTransaction(actionEvent, "Special", eTitleLabel.getText(), eSpecial.getValue(), Double.parseDouble(eSPrice.getText().substring(1)), new java.sql.Date(System.currentTimeMillis()), new java.sql.Time(System.currentTimeMillis()));
+            }
+            if (eNormal.getValue() != 0){
+                DBUtils.addTransaction(actionEvent, "Normal", eTitleLabel.getText(), eNormal.getValue(), Double.parseDouble(eNPrice.getText().substring(1)), new java.sql.Date(System.currentTimeMillis()), new java.sql.Time(System.currentTimeMillis()));
+            }
+            eClear.fire();
+        });
+        eSpecial.setOnMouseClicked(mouseEvent -> {
+            eSPrice.setText("$" + (eSpecial.getValue() * 10) + ".00");
+            eTotal.setText("$" + (eSpecial.getValue() * 10 + eNormal.getValue() * 5) + ".00");
+        });
+        eNormal.setOnMouseClicked(mouseEvent -> {
+            eNPrice.setText("$" + (eNormal.getValue() * 5) + ".00");
+            eTotal.setText("$" + (eSpecial.getValue() * 10 + eNormal.getValue() * 5) + ".00");
+        });
         dashLink.setOnAction(actionEvent -> {
             PaneDisabler();
             CompletelyEnable(dashTop);
@@ -172,6 +233,14 @@ public class HomeController implements Initializable {
         } else {
             return null;
         }
+    }
+
+    public void fillEditMoviesTable(){
+        eMovieTable.setItems(FXCollections.observableList(DBUtils.getAllMovies()));
+        eMTitle.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().title()));
+        eMGenre.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().genre()));
+        eMDate.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().releaseDate().toString()));
+        eMovieTable.getColumns().setAll(eMTitle, eMGenre, eMDate);
     }
 
     public void fillAddMoviesTable() {
