@@ -149,6 +149,20 @@ public class DBUtils {
         }
     }
 
+    public static ArrayList<Ticket> getTickets() {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("SELECT * FROM transaction");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            ArrayList<Ticket> tickets = new ArrayList<>();
+            while (resultSet.next()) {
+                tickets.add(new Ticket(resultSet.getInt("id"), resultSet.getString("ticketType"), resultSet.getString("movieTitle"), resultSet.getDate("date"), resultSet.getTime("time")));
+            }
+            return tickets;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void addTransaction(ActionEvent event, String type, String movieTitle, int quantity, double total, Date date, Time time){
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO transaction (ticketType, movieTitle, quantity, total, date, time) VALUES (?, ?, ?, ?, ?, ?)");

@@ -40,6 +40,12 @@ public class HomeController implements Initializable {
     private TableColumn<Movie, String> titleColAdd, genreColAdd, durationColAdd, publishedColAdd;
 
     @FXML
+    private TableView<Ticket> ticketTable;
+
+    @FXML
+    private TableColumn<Ticket, String> tNumCol, tNameCol, tGenreCol, tDateCol, tTimeCol;
+
+    @FXML
     private DatePicker dateAdd;
 
     @FXML
@@ -67,6 +73,7 @@ public class HomeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         fillAddMoviesTable();
         fillEditMoviesTable();
+        fillTicketTable();
         eNormal.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
         eSpecial.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
 
@@ -250,5 +257,15 @@ public class HomeController implements Initializable {
         durationColAdd.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().duration()));
         publishedColAdd.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().releaseDate().toString()));
         movieList.getColumns().setAll(titleColAdd, genreColAdd, durationColAdd, publishedColAdd);
+    }
+
+    public void fillTicketTable() {
+        ticketTable.setItems(FXCollections.observableList(DBUtils.getTickets()));
+        tNumCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().num() + ""));
+        tNameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().movie()));
+        tGenreCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().genre()));
+        tDateCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().date().toString()));
+        tTimeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().time().toString()));
+        ticketTable.getColumns().setAll(tNumCol, tNameCol, tGenreCol, tDateCol, tTimeCol);
     }
 }
