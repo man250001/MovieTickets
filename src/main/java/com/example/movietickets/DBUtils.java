@@ -163,6 +163,16 @@ public class DBUtils {
         }
     }
 
+    public static void deleteTicket(ActionEvent event, int id) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement("DELETE FROM transaction WHERE id = ?");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void addTransaction(ActionEvent event, String type, String movieTitle, int quantity, double total, Date date, Time time){
         try {
             PreparedStatement preparedStatement = getConnection().prepareStatement("INSERT INTO transaction (ticketType, movieTitle, quantity, total, date, time) VALUES (?, ?, ?, ?, ?, ?)");

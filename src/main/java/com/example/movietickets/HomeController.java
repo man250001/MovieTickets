@@ -58,6 +58,12 @@ public class HomeController implements Initializable {
     private ImageView eImage;
 
     @FXML
+    private Button tClear, tDelete;
+
+    @FXML
+    private TextField tID, tTitle, tGenre, tDate, tTime;
+
+    @FXML
     private Button eClear, eBuy, eReceipt;
 
     @FXML
@@ -77,7 +83,26 @@ public class HomeController implements Initializable {
         eNormal.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
         eSpecial.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0));
 
-
+        ticketTable.setOnMouseClicked(mouseEvent -> {
+            Ticket ticket = ticketTable.getSelectionModel().getSelectedItem();
+            tID.setText(ticket.num() + "");
+            tTitle.setText(ticket.movie());
+            tGenre.setText(ticket.genre());
+            tDate.setText(ticket.date().toString());
+            tTime.setText(ticket.time().toString());
+        });
+        tClear.setOnAction(actionEvent -> {
+            tID.clear();
+            tTitle.clear();
+            tGenre.clear();
+            tDate.clear();
+            tTime.clear();
+        });
+        tDelete.setOnAction(actionEvent -> {
+            DBUtils.deleteTicket(actionEvent, Integer.parseInt(tID.getText()));
+            fillTicketTable();
+            tClear.fire();
+        });
         eMovieTable.setOnMouseClicked(mouseEvent -> {
             Movie movie = eMovieTable.getSelectionModel().getSelectedItem();
             eTitleLabel.setText(movie.title());
@@ -199,6 +224,7 @@ public class HomeController implements Initializable {
             dateAdd.setValue(null);
             imageAdd.setImage(null);
         });
+
     }
 
     public void CompletelyDisable(Pane pane) {
